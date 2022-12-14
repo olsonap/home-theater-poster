@@ -113,7 +113,12 @@
         </div>
         <script>
         function hoverImage(poster_path) {
-            document.getElementById("poster").src = poster_path;
+            if (poster_path == "None") {
+                document.getElementById("poster").src = 'http://192.168.86.34:8000/static/default.jpeg';
+            }
+            else {
+                document.getElementById("poster").src = poster_path;
+            }
         }
         function selectMovie(movieid) {
             var url = "{% url 'selected' 123 %}"

@@ -98,7 +98,9 @@ def make_selection(request, moviename=None):
         for result in search:
             movieID = result.id
             new_string = f"{result.title} | {result.release_date[0:4]}"
-            poster_path = f"http://image.tmdb.org/t/p/original{result.poster_path}"
+            poster_path = None
+            if result.poster_path:
+                poster_path = f"http://image.tmdb.org/t/p/original{result.poster_path}"
             search_results.append((new_string, poster_path, movieID))
         if chosen_movie == None:
             return render(request, "make_selection.html",

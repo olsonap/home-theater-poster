@@ -1,5 +1,5 @@
 """
-ASGI config for attempt2hometheater project.
+ASGI config for home-theater-poster project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'attempt2hometheater.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'home-theater-poster.settings')
 
 application = get_asgi_application()
