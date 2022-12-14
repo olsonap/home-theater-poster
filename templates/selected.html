@@ -16,11 +16,25 @@
           margin: 30px;
         }
 
-        img {
-            max-width: 100%;
-            max-height: 100%;
+        .moviedesc {
+          list-style-type: none;
+          margin: 15px;
+          padding: 0;
+          font-family: 'Nunito';
+          color: white;
+          top: 160px;
+          width: 65%;
+          position: absolute;
         }
 
+        img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: center;
+        }
 
         ul.topBar{
           list-style-type: none;
@@ -55,21 +69,12 @@
           padding: 10px 20px;
           text-decoration: none;
         }
-        li f {
-          display: block;
-          color: white;
-          font-family: 'Nunito';
-          font-size: 25px;
-          text-align: left;
-          padding: 10px 20px;
-          text-decoration: none;
-        }
         li a:hover:not(.active) {
           background-color: #111;
         }
     </style>
 </head>
-<body style="background-color:#333;">
+<body style="background-color:#333;" onload="execute('{{ trailer_exists }}')">
     <main>
     <!-- templates/index.html -->
     <div class="posterpreview">
@@ -79,39 +84,31 @@
         <div>
             <ul class="topBar">
                 <li>
-                {% if user.is_authenticated %}
-                  <d>Hi {{ user.first_name }}!</d>
-                  <a href="{% url 'logout' %}">Log Out</a>
-                {% else %}
-                  <d>You are not logged in</d>
-                  <a href="{% url 'login' %}">Log In</a>
-                {% endif %}
-
-                    <f>In the field below, please type the name of a movie.</f>
-                    <form action="" method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="text" name="moviename" placeholder="Search" style="font-size:46px; margin:10px;">
-                    <input type="Submit" name="submit" value="Submit" style="font-size:46px; margin:10px;"/>
-                    </form>
-
+                    {% if user.is_authenticated %}
+                      <d>Hi {{ user.first_name }}!</d>
+                      <a href="{% url 'logout' %}">Log Out</a>
+                    {% else %}
+                      <d>You are not logged in</d>
+                      <a href="{% url 'login' %}">Log In</a>
+                    {% endif %}
+                    <a href="{% url 'index' %}">Go Back</a>
                 </li>
             </ul>
-
+        </div>
+        <div class="moviedesc">
+            <h1>{{ movie_name }} | {{ runtime }}min</h1>
+            <h3>{{ release_date }}</h3>
+            <h2>{{ overview }}</h2>
+            <iframe src="{{ trailer_url }}" id="vid1" width="640" height="360" hidden="hidden"></iframe>
         </div>
         <script>
-        function hoverImage(poster_path) {
-            document.getElementById("poster").src = poster_path;
-        }
-        function selectMovie(movieid) {
-            window.location.href = 'http://127.0.0.1:8000/selected/' + movieid;
-        }
+            function execute(movie_exists){
+                if (movie_exists == 'T') {
+                    var frame = document.getElementById("vid1");
+                    frame.removeAttribute("hidden")
+                }
+            }
         </script>
     </main>
 </body>
 </html>
-
-
-
-
-

@@ -21,7 +21,19 @@
             max-height: 100%;
         }
 
-
+        ul.bottomList {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          background-color: #333;
+          color: white;
+          font-family: 'Nunito';
+          font-size: 25px;
+          text-align: center;
+          top: 160px;
+          width: 70%;
+          position: absolute;
+        }
         ul.topBar{
           list-style-type: none;
           margin: 0;
@@ -55,12 +67,12 @@
           padding: 10px 20px;
           text-decoration: none;
         }
-        li f {
+        li e {
           display: block;
           color: white;
           font-family: 'Nunito';
           font-size: 25px;
-          text-align: left;
+          text-align: center;
           padding: 10px 20px;
           text-decoration: none;
         }
@@ -74,44 +86,40 @@
     <!-- templates/index.html -->
     <div class="posterpreview">
         {% load static %}
-        <img async src="{{ poster_path }}" id="poster" alt="Default Poster"/>
+        <img async src="{{ default_path }}" id="poster" alt="Default Poster"/>
     </div>
         <div>
             <ul class="topBar">
                 <li>
-                {% if user.is_authenticated %}
-                  <d>Hi {{ user.first_name }}!</d>
-                  <a href="{% url 'logout' %}">Log Out</a>
-                {% else %}
-                  <d>You are not logged in</d>
-                  <a href="{% url 'login' %}">Log In</a>
-                {% endif %}
-
-                    <f>In the field below, please type the name of a movie.</f>
-                    <form action="" method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="text" name="moviename" placeholder="Search" style="font-size:46px; margin:10px;">
-                    <input type="Submit" name="submit" value="Submit" style="font-size:46px; margin:10px;"/>
-                    </form>
-
+                    {% if user.is_authenticated %}
+                    <d>Hi {{ user.first_name }}!</d>
+                    <a href="{% url 'logout' %}">Log Out</a>
+                    {% else %}
+                    <d>You are not logged in</d>
+                    <a href="{% url 'login' %}">Log In</a>
+                    {% endif %}
+                    <a href="{% url 'index' %}">Go Back</a>
                 </li>
             </ul>
 
+            <ul class="bottomList">
+                <h2>You searched for: '{{ searched_movie }}':</h2>
+                {% for result, poster_path, movieid in search %}
+                    <li onmouseenter="hoverImage('{{ poster_path }}')">
+                        <e onclick="selectMovie('{{ movieid }}')">{{ result }}</e>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
         <script>
         function hoverImage(poster_path) {
             document.getElementById("poster").src = poster_path;
         }
         function selectMovie(movieid) {
-            window.location.href = 'http://127.0.0.1:8000/selected/' + movieid;
+            var url = "{% url 'selected' 123 %}"
+            window.location.href = url.replace('123', movieid);
         }
         </script>
     </main>
 </body>
 </html>
-
-
-
-
-
