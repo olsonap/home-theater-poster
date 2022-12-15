@@ -19,7 +19,7 @@ import views
 
 urlpatterns = [
     path('index/', views.index, name='index'),
-    path('get-current-movie/', views.get_current_movie, name='get-current-movie'),
+    path('get-current-movie/<movie_id>', views.get_current_movie, name='get-current-movie'),
     path('', views.index, name='index'),
     path('make-selection/<moviename>/', views.make_selection, name='make-selection'),
     path('selected/<movieid>', views.selected, name='selected'),

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 import time
 from tmdbv3api import TMDb
 from tmdbv3api import Movie
@@ -13,7 +14,7 @@ import threading
 import socket
 from PIL import Image
 from io import BytesIO
-
+import json
 
 tmdb = TMDb()
 tmdb.api_key = '2b9f3ff3381ad78a6a295082cef2910d'
@@ -21,6 +22,8 @@ tmdb.language = 'en'
 tmdb.debug = True
 movie = Movie()
 chosen_movie = None
+movieID = None
+poster_path = None
 default = Image.open(r'static/default.jpeg')
 resetposter = default.copy()
 resetposter.save(r'static/poster.jpg')
@@ -53,6 +56,8 @@ def index(request):
 @login_required
 def selected(request, movieid):
     global chosen_movie
+    global poster_path
+    global movieID
     if request.method == "GET":
         chosen_movie = movie.details(movieid)
         #print(chosen_movie)
@@ -61,6 +66,7 @@ def selected(request, movieid):
         release_date = chosen_movie["release_date"]
         runtime = chosen_movie["runtime"]
         tmpvideos = chosen_movie["videos"]
+        movieID = chosen_movie["id"]
         trailer_url = None
         trailer_exists = 'F'
         if tmpvideos:
@@ -91,13 +97,17 @@ def selected(request, movieid):
 @login_required
 def make_selection(request, moviename=None):
     global chosen_movie
+    global movieID
     if request.method == "GET":
         print("GET : " + moviename)
         search = movie.search(moviename)
         search_results = []
         for result in search:
             movieID = result.id
-            new_string = f"{result.title} | {result.release_date[0:4]}"
+            if result.get('release_date'):
+                new_string = f"{result.title} | {result.release_date[0:4]}"
+            else:
+                new_string = f"{result.title}"
             poster_path = None
             if result.poster_path:
                 poster_path = f"http://image.tmdb.org/t/p/original{result.poster_path}"
@@ -132,10 +142,29 @@ def poster_movieID(id):
     return
 
 @csrf_exempt
-def get_current_movie(request):
+def get_current_movie(request, movie_id=None):
+    global movieID
+    global poster_path
     #if chosen_movie:
     #    poster_path = "http://image.tmdb.org/t/p/original" + chosen_movie.poster_path
     #    return {'poster_path': poster_path}
     if request.method == "GET":
+        if movie_id:
+            movie_idtmp = str(movie_id).strip()
+            movieIDtmp = str(movieID).strip()
+            if movie_idtmp == movieIDtmp:
+                print("Movie didn't change")
+                return JsonResponse({'msg': 'Movie has not changed'})
+        return JsonResponse({'msg':{'movie_id':movieID,'poster_path':poster_path}})
+        data={'movie_id':movieID}
+        print("sending image")
+        im = Image.open('static/poster.jpg')
+        exif = im.getexif()
+        exif[0x9286] = movieID
+        im.save('static/poster.jpg', exif=exif)
         poster_img = open('static/poster.jpg', 'rb')
+        print(exif)
         return FileResponse(poster_img)
+    data = {'error':'What are you trying to do?'}
+    return JsonResponse(data)
+
