@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dad's App on Desktop</title>
+    <title>Dad's App on Mobile</title>
     <style>
         body {margin:0;}
 
@@ -14,6 +14,7 @@
           width: 25%;
           transition: all 0.3s ease;
           margin: 30px;
+          z-index: 2;
         }
 
         img {
@@ -30,39 +31,56 @@
           font-family: 'Nunito';
           font-size: 25px;
           text-align: center;
-          top: 160px;
-          width: 70%;
           position: absolute;
+          top: 373px;
+          width: 100%;
+          user-select: none
         }
-        ul.topBar{
+        ul.bar{
           list-style-type: none;
           margin: 0;
           padding: 0;
           background-color: #222;
-          top: 0;
-          width: 70%;
-          position: absolute;
+          width: 100%;
+          position: fixed;
+          z-index: 1;
+        }
+        .stay{
+          display: block;
+          position: fixed;
+            z-index:1
         }
 
         li {
           float: left;
-          width: 100%
+          width: 100%;
+          user-select: none
         }
-
-        li a {
+        g {
           display: block;
           color: white;
           font-family: 'Nunito';
-          font-size: 25px;
+          font-style: italic;
+          font-size: 60px;
+          text-align: left;
+          padding: 10px 20px;
+        }
+        li a {
+          display: block;
+          color: white;
+            position: static;
+          font-family: 'Nunito';
+          font-size: 65px;
           text-align: left;
           padding: 10px 20px;
           text-decoration: none;
         }
         li d {
           display: block;
+        position: static;
           color: white;
           font-family: 'Nunito';
-          font-size: 35px;
+          font-size: 100px;
           text-align: left;
           padding: 10px 20px;
           text-decoration: none;
@@ -70,26 +88,35 @@
         li e {
           display: block;
           color: white;
-          font-family: 'Nunito';
-          font-size: 25px;
-          text-align: center;
-          padding: 10px 20px;
+          font-family: 'roboto';
+          font-size: 50px;
+          text-align: left;
+          padding: 40px 10px;
           text-decoration: none;
+          border-style: double;
+          border-color: white;
+          border-width: thin;
         }
         li a:hover:not(.active) {
           background-color: #111;
         }
     </style>
+    <link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
 </head>
-<body style="background-color:#333;">
-    <main>
+<body style="background-color:#333; user-select:none;">
+    <main style="user-select:none">
     <!-- templates/index.html -->
+    <div>
     <div class="posterpreview">
         {% load static %}
         <img async src="{{ default_path }}" id="poster" alt="Default Poster"/>
     </div>
-        <div>
-            <ul class="topBar">
+    </div style="user-select:none">
+
+        <div class="stay">
+            <ul class="bar">
                 <li>
                     {% if user.is_authenticated %}
                     <d>Hi {{ user.first_name }}!</d>
@@ -101,11 +128,12 @@
                     <a href="{% url 'index' %}">Go Back</a>
                 </li>
             </ul>
-
+        </div>
+        <div style="user-select:none">
             <ul class="bottomList">
-                <h2>You searched for: '{{ searched_movie }}':</h2>
+                <g>'{{ searched_movie }}'</g>
                 {% for result, poster_path, movieid in search %}
-                    <li onmouseenter="hoverImage('{{ poster_path }}')">
+                    <li ontouchstart="hoverImage('{{ poster_path }}')">
                         <e onclick="selectMovie('{{ movieid }}')">{{ result }}</e>
                     </li>
                 {% endfor %}

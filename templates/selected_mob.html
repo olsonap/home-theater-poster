@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dad's App on Desktop</title>
+    <title>Dad's App on Mobile</title>
     <style>
         body {margin:0;}
 
@@ -14,17 +14,21 @@
           width: 25%;
           transition: all 0.3s ease;
           margin: 30px;
+          z-index: 2;
         }
 
-        .moviedesc {
+        .moviedscr {
           list-style-type: none;
-          margin: 15px;
+          margin: 0px;
           padding: 0;
           font-family: 'Nunito';
           color: white;
-          top: 160px;
-          width: 65%;
-          position: absolute;
+          text-align: center;
+          position: fixed;
+          top: 373px;
+          height: 100%;
+          width: 100%;
+          user-select: none;
         }
 
         img {
@@ -36,43 +40,70 @@
             justify-content: center;
         }
 
+        iframe {
+            aspect-ratio: 16/9;
+            width: 96%;
+            padding: auto;
+        }
+
+        .moviedscr a{
+          display: block;
+          color: white;
+          position: static;
+          font-family: 'Nunito';
+          text-align: left;
+          padding: 10px 20px;
+          text-decoration: none;
+        }
+
         ul.topBar{
           list-style-type: none;
           margin: 0;
           padding: 0;
           background-color: #222;
           top: 0;
-          width: 70%;
+          width: 100%;
           position: absolute;
         }
-
-        li {
-          float: left;
-          width: 100%
-        }
-
         li a {
           display: block;
           color: white;
+          position: static;
           font-family: 'Nunito';
-          font-size: 25px;
+          font-size: 65px;
           text-align: left;
           padding: 10px 20px;
           text-decoration: none;
         }
         li d {
           display: block;
+        position: static;
           color: white;
           font-family: 'Nunito';
-          font-size: 35px;
+          font-size: 100px;
           text-align: left;
           padding: 10px 20px;
           text-decoration: none;
+        }
+        li e {
+          display: block;
+          color: white;
+          font-family: 'roboto';
+          font-size: 50px;
+          text-align: left;
+          padding: 40px 10px;
+          text-decoration: none;
+          border-style: double;
+          border-color: white;
+          border-width: thin;
         }
         li a:hover:not(.active) {
           background-color: #111;
         }
     </style>
+    <link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
 </head>
 <body style="background-color:#333;" onload="execute('{{ trailer_exists }}')">
     <main>
@@ -95,11 +126,11 @@
                 </li>
             </ul>
         </div>
-        <div class="moviedesc">
-            <h1>{{ movie_name }} | {{ runtime }}min</h1>
-            <h3>{{ release_date }}</h3>
-            <h2>{{ overview }}</h2>
-            <iframe src="{{ trailer_url }}" id="vid1" width="640" height="360" hidden="hidden"></iframe>
+        <div class="moviedscr">
+            <a style="font-size: 60px; padding: 60px 0px 0px 20px;">{{ movie_name }} | {{ runtime }}min</a>
+            <a style="font-size: 35px;">{{ release_date }}</a>
+            <a style="font-size: 45px; padding: 0px 20px 40px 20px">{{ overview }}</a>
+            <iframe src="{{ trailer_url }}" id="vid1" style="aspect-ratio:16/9;" hidden="hidden"></iframe>
         </div>
         <script>
             function execute(movie_exists){

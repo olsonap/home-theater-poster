@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dad's App on Mobile</title>
+    <style>
+        body {margin:0;}
+        .box {
+          display: flex;
+          flex-flow: column;
+          height: 80vh;
+        }
+
+        .box .header {
+          flex: 0 1 264px;
+          /* The above is shorthand for:
+          flex-grow: 0,
+          flex-shrink: 1,
+          flex-basis: auto
+          */
+        }
+
+        .box .content {
+          flex: 1 1 auto;
+        }
+
+        .box .footer {
+          flex: 0 1 200px;
+        }
+        .posterpreview {
+          display: flex;
+          position: absolute;
+          transition: all 0.3s ease;
+          justify-content: center;
+        }
+
+        img {
+            max-width: 75%;
+            max-height: 75%;
+            width: 100%;
+        }
+
+        ul.bar{
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          background-color: #222;
+          width: 100%;
+          position: absolute;
+          z-index: 1;
+        }
+
+        li {
+          float: left;
+          width: 100%
+        }
+
+        li a {
+          display: block;
+          color: white;
+          font-family: 'Nunito';
+          font-size: 65px;
+          text-align: left;
+          padding: 10px 20px;
+          text-decoration: none;
+        }
+        li d {
+          display: block;
+          color: white;
+          font-family: 'Nunito';
+          font-size: 100px;
+          text-align: left;
+          padding: 10px 20px;
+          text-decoration: none;
+        }
+        li f {
+          display: block;
+          color: white;
+          font-family: 'Nunito';
+          font-size: 80px;
+          text-align: left;
+          padding: 10px 20px;
+          text-decoration: none;
+        }
+        li a:hover:not(.active) {
+          background-color: #111;
+        }
+    </style>
+    <link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet'>
+</head>
+<body style="background-color:#333;">
+    <main>
+    <!-- templates/index.html -->
+
+        <div class="box">
+            <div class="header">
+                <ul class="bar" style="top: 0;">
+                    <li>
+                    {% if user.is_authenticated %}
+                      <d>Hi {{ user.first_name }}!</d>
+                      <a href="{% url 'logout' %}">Log Out</a>
+                    {% else %}
+                      <d>You are not logged in</d>
+                      <a href="{% url 'login' %}">Log In</a>
+                    {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <div class="content">
+                <div class="posterpreview">
+                    {% load static %}
+                    <img async src="{{ poster_path }}" id="poster" alt="Default Poster"/>
+                </div>
+            </div>
+            <div class="footer">
+                <ul class="bar" style="bottom:0;">
+                    <li>
+                        <f>Type the name of a movie.</f>
+                        <form action="" method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="text" name="moviename" placeholder="Search" style="font-size:50px; height:100px; margin:10px;">
+                        <input type="Submit" name="submit" value="Submit" style="font-size:50px; height:100px; margin:10px;"/>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+        function hoverImage(poster_path) {
+            document.getElementById("poster").src = poster_path;
+        }
+        function selectMovie(movieid) {
+            window.location.href = 'http://127.0.0.1:8000/selected/' + movieid;
+        }
+        </script>
+    </main>
+</body>
+</html>
+
+
+
+
+

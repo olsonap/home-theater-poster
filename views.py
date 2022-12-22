@@ -16,6 +16,9 @@ from PIL import Image
 from io import BytesIO
 import json
 
+from django_user_agents.utils import get_user_agent
+
+
 tmdb = TMDb()
 tmdb.api_key = '2b9f3ff3381ad78a6a295082cef2910d'
 tmdb.language = 'en'
@@ -29,18 +32,22 @@ resetposter = default.copy()
 resetposter.save(r'static/poster.jpg')
 
 # Login page
-def login(request):
-    print("Entering Index")
-    return render(request, "login.html")
+#def login(request):
+#    print("Entering Index")
+#    return render(request, "login.html")
 
 
 def admin_login(request):
     print("Entering Index")
+    if user_agent.is_mobile:
+        print("IS MOBILE")
     return render(request, "registration/login.html")
 
 
 @login_required
 def index(request):
+    user_agent = get_user_agent(request)
+
     global chosen_movie, movie
     print("Entering Index")
     if request.method == "POST":
@@ -49,12 +56,17 @@ def index(request):
             return redirect('make-selection', moviename=moviename)
         #return redirect('/make-selection/', moviename)
     if chosen_movie == None:
+        if user_agent.is_mobile:
+            return render(request, "index_mob.html", {'poster_path': '/static/default.jpeg'})
         return render(request, "index.html", {'poster_path': '/static/default.jpeg'})
     poster_path = f"http://image.tmdb.org/t/p/original{chosen_movie.poster_path}"
+    if user_agent.is_mobile:
+        return render(request, "index_mob.html", {'poster_path': poster_path})
     return render(request, "index.html", {'poster_path': poster_path})
 
 @login_required
 def selected(request, movieid):
+    user_agent = get_user_agent(request)
     global chosen_movie
     global poster_path
     global movieID
@@ -85,6 +97,15 @@ def selected(request, movieid):
         response = requests.get(poster_path)
         img = Image.open(BytesIO(response.content))
         img.save('static/poster.jpg')
+        if user_agent.is_mobile:
+            return render(request, "selected_mob.html", {'poster_path': poster_path,
+                                                     'movie_name': movie_name,
+                                                     'overview': overview,
+                                                     'release_date': release_date,
+                                                     'runtime': runtime,
+                                                     'trailer_url': trailer_url,
+                                                     'trailer_exists': trailer_exists
+                                                     })
         return render(request, "selected.html", {'poster_path': poster_path,
                                                  'movie_name':movie_name,
                                                  'overview': overview,
@@ -96,6 +117,8 @@ def selected(request, movieid):
 
 @login_required
 def make_selection(request, moviename=None):
+    user_agent = get_user_agent(request)
+
     global chosen_movie
     global movieID
     if request.method == "GET":
@@ -113,14 +136,23 @@ def make_selection(request, moviename=None):
                 poster_path = f"http://image.tmdb.org/t/p/original{result.poster_path}"
             search_results.append((new_string, poster_path, movieID))
         if chosen_movie == None:
+            if user_agent.is_mobile:
+                return render(request, "make_selection_mob.html",
+                              {'search': search_results, 'searched_movie': moviename,
+                               'default_path': '/static/default.jpeg'})
             return render(request, "make_selection.html",
-                          {'search': search_results, 'searched_movie': moviename, 'default_path': '/static/default.jpeg'})
+                          {'search': search_results, 'searched_movie': moviename,
+                           'default_path': '/static/default.jpeg'})
         default_path = f"http://image.tmdb.org/t/p/original{chosen_movie.poster_path}"
+        if user_agent.is_mobile:
+            return render(request, "make_selection_mob.html", {'search': search_results, 'searched_movie': moviename, 'default_path': default_path})
         return render(request, "make_selection.html", {'search': search_results, 'searched_movie': moviename, 'default_path': default_path})
 
     if request.method == "POST":
         selection = request.POST['selection']
         poster_movieID(int(moviename))
+        if user_agent.is_mobile:
+            return render(request, "make_selection_mob.html")
         return render(request, "make_selection.html")
 
 def poster_movieID(id):

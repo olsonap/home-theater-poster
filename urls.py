@@ -28,5 +28,5 @@ urlpatterns = [
     #path('poster-movieID/', views.poster_movieID, name='poster-movieID'),
     path('admin-accounts/', include("django.contrib.auth.urls")),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('login/', views.login, name='login'),
+    #path('login/', views.login, name='login'),
 ]
